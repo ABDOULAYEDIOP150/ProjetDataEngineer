@@ -1,39 +1,66 @@
 # 📊 Data Engineering Project — E-commerce Pipeline
 
+---
+
 ## 🎯 Objectif du projet
 
-Ce projet a pour objectif de construire une **pipeline data complète** de bout en bout :
+Ce projet a pour objectif de construire une **pipeline data complète de bout en bout** :
 
-```
-Sources (CSV / API) → Python → PostgreSQL → (à venir : SQL / dbt / Airflow / BI)
+```text
+Sources (CSV / API) → Python → PostgreSQL → SQL → (à venir : dbt / Airflow / BI)
 ```
 
-Dans cette première étape, je me concentre sur **l’ingestion des données**.
+Le projet est structuré en plusieurs étapes :
+
+* Étape 1 : Ingestion des données
+* Étape 2 : Modélisation PostgreSQL + staging
+* Étapes suivantes : Data Warehouse, dbt, orchestration, BI
 
 ---
 
-## 🧱 Architecture (étape actuelle)
+# 🧱 Architecture du projet
 
-```
-data/
-  raw/
-    simulated/   → données générées avec Faker
-    api/         → données récupérées via API
-
-ingestion/
-  generate_fake_data.py
-  extract_api.py
-  load_sources.py
-  utils.py
+```text
+project/
+│
+├── data/
+│   ├── raw/
+│   │   ├── simulated/
+│   │   ├── api/
+│   │   └── olist/
+│   └── processed/
+│
+├── ingestion/
+│   ├── generate_fake_data.py
+│   ├── extract_api.py
+│   ├── load_sources.py
+│   └── utils.py
+│
+├── sql/
+│   ├── 01_create_schemas.sql
+│   ├── 02_create_raw_constraints.sql
+│   ├── 03_checks_queries.sql
+│   ├── 04_create_staging_tables.sql
+│   ├── 05_insert_staging_tables.sql
+│   ├── 06_staging_checks.sql
+│   ├── 07_raw_analysis.sql
+│   ├── 08_staging_analysis.sql
+│   └── 09_create_views.sql
+│
+├── notebooks/
+├── .env
+├── requirements.txt
+├── README.md
+└── docker-compose.yml
 ```
 
 ---
 
-## 📥 Sources de données
+# 📥 Étape 1 — Ingestion des données
 
-### 1. Données simulées (CSV)
+## Sources utilisées
 
-Des données e-commerce ont été générées avec Python et Faker :
+### 1. Données simulées (Faker)
 
 * customers
 * products
@@ -41,89 +68,62 @@ Des données e-commerce ont été générées avec Python et Faker :
 * order_items
 * payments
 
-Objectif :
+Stockées dans :
 
-* simuler un environnement réel
-* contrôler la qualité et la structure des données
-
----
-
-### 2. Données API
-
-Données récupérées via une API externe (FakeStoreAPI) :
-
-* produits
-* utilisateurs
-* paniers
-
-Objectif :
-
-* apprendre à consommer une API REST
-* gérer des données JSON
-
----
-
-## ⚙️ Pipeline d’ingestion
-
-### Étape 1 — Génération des données
-
-Script :
-
-```
-python ingestion/generate_fake_data.py
-```
-
-➡️ Génère des fichiers CSV dans :
-
-```
+```text
 data/raw/simulated/
 ```
 
 ---
 
-### Étape 2 — Extraction API
+### 2. Données API (FakeStoreAPI)
 
-Script :
+* produits
+* utilisateurs
+* paniers
 
-```
-python ingestion/extract_api.py
-```
+Stockées dans :
 
-➡️ Récupère les données API et les stocke en CSV dans :
-
-```
+```text
 data/raw/api/
 ```
 
 ---
 
-### Étape 3 — Chargement PostgreSQL
+## ⚙️ Pipeline d’ingestion
 
-Script :
+### Génération des données
 
+```bash
+python ingestion/generate_fake_data.py
 ```
-python ingestion/load_sources.py
-```
-
-➡️ Charge toutes les données dans PostgreSQL
 
 ---
 
-## 🗄️ Stockage PostgreSQL
+### Extraction API
 
-Base de données :
-
-```
-ecommerce_dw
+```bash
+python ingestion/extract_api.py
 ```
 
-Schema utilisé :
+---
 
-```
-raw
+### Chargement PostgreSQL
+
+```bash
+python ingestion/load_sources.py
 ```
 
-Tables créées automatiquement :
+---
+
+## 🗄️ Résultat PostgreSQL
+
+```text
+Database : ecommerce_dw
+Schema   : raw
+```
+
+Tables :
 
 * raw.customers
 * raw.products
@@ -136,51 +136,198 @@ Tables créées automatiquement :
 
 ---
 
-## 🔌 Connexion PostgreSQL
+# 🏗️ Étape 2 — Modélisation PostgreSQL
 
-Connexion gérée via SQLAlchemy avec variables d’environnement :
+Objectif :
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=ecommerce_dw
-DB_USER=postgres
-DB_PASSWORD=******
-```
+* structurer les données
+* garantir la qualité
+* préparer un Data Warehouse
 
 ---
 
-## 🧪 Vérification
+## 🔹 2.1 Création des schemas
 
-Exemple de requête SQL :
+📄 `sql/01_create_schemas.sql`
 
 ```sql
-SELECT * FROM raw.customers LIMIT 10;
+CREATE SCHEMA IF NOT EXISTS raw;
+CREATE SCHEMA IF NOT EXISTS staging;
+CREATE SCHEMA IF NOT EXISTS mart;
 ```
 
 ---
 
-## 🧠 Compétences démontrées
+## 🔹 2.2 Ajout des contraintes (raw)
 
-* Génération de données avec Faker
-* Consommation d’API REST
-* Manipulation de données avec pandas
-* Chargement de données dans PostgreSQL
-* Gestion de configuration (.env)
-* Organisation d’un projet data engineering
+📄 `sql/02_create_raw_constraints.sql`
+
+* Clés primaires
+* Clés étrangères
+* Contraintes CHECK
+
+Exemples :
+
+```sql
+ALTER TABLE raw.orders
+ADD PRIMARY KEY (order_id);
+
+ALTER TABLE raw.orders
+ADD CONSTRAINT fk_orders_customers
+FOREIGN KEY (customer_id)
+REFERENCES raw.customers(customer_id);
+```
 
 ---
 
-## 🚀 Prochaines étapes
+## 🔹 2.3 Vérification des données
 
-* Modélisation SQL (staging / marts)
-* Création d’un Data Warehouse (schema en étoile)
-* Transformation avec dbt
-* Orchestration avec Airflow
-* Dashboard (Power BI / Looker)
+📄 `sql/03_checks_queries.sql`
+
+```sql
+SELECT COUNT(*) FROM raw.customers;
+SELECT COUNT(*) FROM raw.orders;
+```
 
 ---
 
-## 💬 Résumé
+## 🔹 2.4 Création des tables staging
 
-> Mise en place d’une ingestion multi-sources (CSV + API) avec Python, et stockage des données brutes dans PostgreSQL (schema raw) pour préparer les transformations analytiques.
+📄 `sql/04_create_staging_tables.sql`
+
+Objectif :
+
+* typage propre
+* contraintes métier
+* préparation analytique
+
+---
+
+## 🔹 2.5 Chargement vers staging
+
+📄 `sql/05_insert_staging_tables.sql`
+
+Transformation :
+
+* cast des types
+* nettoyage des données
+* suppression des doublons
+
+---
+
+## 🔹 2.6 Vérification staging
+
+📄 `sql/06_staging_checks.sql`
+
+```sql
+SELECT COUNT(*) FROM staging.orders;
+```
+
+---
+
+## 🔹 2.7 Analyse sur données brutes (raw)
+
+📄 `sql/07_raw_analysis.sql`
+
+```sql
+SELECT
+    o.order_id,
+    c.full_name,
+    p.amount
+FROM raw.orders o
+JOIN raw.customers c
+    ON o.customer_id = c.customer_id
+LEFT JOIN raw.payments p
+    ON o.order_id = p.order_id
+LIMIT 10;
+```
+
+Objectif :
+
+* valider ingestion
+* détecter anomalies
+
+---
+
+## 🔹 2.8 Analyse sur données propres (staging)
+
+📄 `sql/08_staging_analysis.sql`
+
+```sql
+SELECT
+    o.order_id,
+    c.full_name,
+    p.amount
+FROM staging.orders o
+JOIN staging.customers c
+    ON o.customer_id = c.customer_id
+LEFT JOIN staging.payments p
+    ON o.order_id = p.order_id
+LIMIT 10;
+```
+
+Objectif :
+
+* analyse fiable
+* base pour reporting
+
+---
+
+## 🔹 2.9 Création de vues (mart)
+
+📄 `sql/09_create_views.sql`
+
+```sql
+CREATE OR REPLACE VIEW mart.v_orders_summary AS
+SELECT
+    o.order_id,
+    o.order_date,
+    o.status,
+    c.full_name,
+    p.amount
+FROM staging.orders o
+JOIN staging.customers c
+    ON o.customer_id = c.customer_id
+LEFT JOIN staging.payments p
+    ON o.order_id = p.order_id;
+```
+
+---
+
+## 🧠 Concepts couverts
+
+* Schémas PostgreSQL (raw / staging / mart)
+* Clés primaires et étrangères
+* Contraintes de qualité
+* Nettoyage des données
+* Jointures SQL
+* Création de vues
+* Architecture data engineering
+
+---
+
+## 🎯 Résultat de l’étape 2
+
+```text
+raw     → données brutes
+staging → données nettoyées
+mart    → vues analytiques
+```
+
+---
+
+# 🚀 Prochaines étapes
+
+* Création du Data Warehouse (star schema)
+* Tables fact / dimension
+* dbt (transformations)
+* Airflow (orchestration)
+* Dashboard BI
+
+---
+
+# 💬 Résumé global
+
+> Pipeline data multi-sources avec ingestion Python, structuration PostgreSQL, nettoyage staging et premières vues analytiques (mart), suivant les bonnes pratiques data engineering.
+
+---
