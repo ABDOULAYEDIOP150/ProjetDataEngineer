@@ -59,7 +59,7 @@ jobs:
 
       - name: Generate fake data
         run: |
-          python ingestion/generate_fake_data.py
+          python data/raw/simulated/generate_fake_data.py
 
       - name: Extract API data
         run: |
