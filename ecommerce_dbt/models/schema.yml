@@ -1,0 +1,138 @@
+version: 2
+
+models:
+  - name: stg_customers
+    description: "Données clients nettoyées depuis raw.customers."
+    columns:
+      - name: customer_id
+        description: "Identifiant unique du client."
+        data_tests:
+          - not_null
+          - unique
+      - name: email
+        description: "Email du client."
+        data_tests:
+          - not_null
+
+  - name: stg_products
+    description: "Données produits nettoyées depuis raw.products."
+    columns:
+      - name: product_id
+        description: "Identifiant unique du produit."
+        data_tests:
+          - not_null
+          - unique
+      - name: price
+        description: "Prix du produit."
+        data_tests:
+          - not_null
+
+  - name: stg_orders
+    description: "Commandes nettoyées depuis raw.orders."
+    columns:
+      - name: order_id
+        description: "Identifiant unique de la commande."
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Client associé à la commande."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: status
+        description: "Statut de la commande."
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['delivered', 'shipped', 'processing', 'cancelled']
+
+  - name: stg_order_items
+    description: "Lignes de commande nettoyées depuis raw.order_items."
+    columns:
+      - name: order_item_id
+        description: "Identifiant unique de la ligne de commande."
+        data_tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: "Commande associée."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: product_id
+        description: "Produit associé."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_products')
+                field: product_id
+
+  - name: stg_payments
+    description: "Paiements nettoyés depuis raw.payments."
+    columns:
+      - name: payment_id
+        description: "Identifiant unique du paiement."
+        data_tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: "Commande associée au paiement."
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_orders')
+                field: order_id
+      - name: amount
+        description: "Montant du paiement."
+        data_tests:
+          - not_null
+
+  - name: dim_customers
+    description: "Dimension clients utilisée pour les analyses."
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: dim_products
+    description: "Dimension produits utilisée pour les analyses."
+    columns:
+      - name: product_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: fact_sales
+    description: "Table de faits des ventes."
+    columns:
+      - name: order_item_id
+        data_tests:
+          - not_null
+          - unique
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
+
+  - name: fact_payments
+    description: "Table de faits des paiements."
+    columns:
+      - name: payment_id
+        data_tests:
+          - not_null
+          - unique

@@ -1,0 +1,11 @@
+id,email,username,password,phone,__v,address.geolocation.lat,address.geolocation.long,address.city,address.street,address.number,address.zipcode,name.firstname,name.lastname
+1,john@gmail.com,johnd,m38rmF$,1-570-236-7033,0,-37.3159,81.1496,kilcoole,new road,7682,12926-3874,john,doe
+2,morrison@gmail.com,mor_2314,83r5^_,1-570-236-7033,0,-37.3159,81.1496,kilcoole,Lovers Ln,7267,12926-3874,david,morrison
+3,kevin@gmail.com,kevinryan,kev02937@,1-567-094-1345,0,40.3467,-30.1310,Cullman,Frances Ct,86,29567-1452,kevin,ryan
+4,don@gmail.com,donero,ewedon,1-765-789-6734,0,50.3467,-20.1310,San Antonio,Hunters Creek Dr,6454,98234-1734,don,romer
+5,derek@gmail.com,derek,jklg*_56,1-956-001-1945,0,40.3467,-40.1310,san Antonio,adams St,245,80796-1234,derek,powell
+6,david_r@gmail.com,david_r,3478*#54,1-678-345-9856,0,20.1677,-10.6789,el paso,prospect st,124,12346-0456,david,russell
+7,miriam@gmail.com,snyder,f238&@*$,1-123-943-0563,0,10.3456,20.6419,fresno,saddle st,1342,96378-0245,miriam,snyder
+8,william@gmail.com,hopkins,William56$hj,1-478-001-0890,0,50.3456,10.6419,mesa,vally view ln,1342,96378-0245,william,hopkins
+9,kate@gmail.com,kate_h,kfejk@*_,1-678-456-1934,0,40.12456,20.5419,miami,avondale ave,345,96378-0245,kate,hale
+10,jimmie@gmail.com,jimmie_k,klein*#%*,1-104-001-4567,0,30.24788,-20.545419,fort wayne,oak lawn ave,526,10256-4532,jimmie,klein

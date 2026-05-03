@@ -1,0 +1,100 @@
+name: CI - Data Engineering Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  dbt-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ecommerce_dw
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ecommerce_dw"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: ecommerce_dw
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dbt-postgres
+
+      - name: Create data folders
+        run: |
+          mkdir -p data/raw/simulated
+          mkdir -p data/raw/api
+
+      - name: Generate fake data
+        run: |
+          python ingestion/generate_fake_data.py
+
+      - name: Extract API data
+        run: |
+          python ingestion/extract_api.py
+
+      - name: Load CSV to PostgreSQL
+        run: |
+          python ingestion/load_csv_to_postgres.py
+
+      - name: Create dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          ecommerce_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: localhost
+                user: postgres
+                password: postgres
+                port: 5432
+                dbname: ecommerce_dw
+                schema: staging
+                threads: 1
+          EOF
+
+      - name: dbt debug
+        working-directory: ecommerce_dbt
+        run: dbt debug
+
+      - name: dbt run
+        working-directory: ecommerce_dbt
+        run: dbt run
+
+      - name: dbt test
+        working-directory: ecommerce_dbt
+        run: dbt test
