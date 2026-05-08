@@ -1,13 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "PORT=$PORT"
+echo "Starting Airflow on Render..."
+echo "PORT=${PORT:-10000}"
 
 airflow db migrate
 
 airflow users create \
-  --username airflow \
-  --password airflow \
+  --username "${AIRFLOW_ADMIN_USERNAME:-airflow}" \
+  --password "${AIRFLOW_ADMIN_PASSWORD:-airflow}" \
   --firstname Admin \
   --lastname User \
   --role Admin \
