@@ -17,6 +17,9 @@ RUN pip uninstall -y \
     apache-airflow-providers-google \
     google-cloud-secret-manager \
     google-cloud-compute \
+    google-cloud-secret-manager \
+    google-cloud-storage \
+    google-cloud-bigquery \
     protobuf \
     proto-plus || true
 
