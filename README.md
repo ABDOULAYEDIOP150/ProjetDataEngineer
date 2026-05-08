@@ -1,6 +1,7 @@
 # 🚀 ProjetDataEngineer
 
 ![CI](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/ci.yml/badge.svg)
+![CD](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/cd.yml/badge.svg)
 
 ## 📊 Data Engineering Project — E-commerce Pipeline
 
