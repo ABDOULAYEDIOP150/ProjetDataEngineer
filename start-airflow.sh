@@ -14,4 +14,8 @@ airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-exec airflow webserver --port "${PORT:-10000}" --hostname 0.0.0.0
+exec airflow webserver \
+  --port "${PORT:-10000}" \
+  --hostname 0.0.0.0 \
+  --workers 1 \
+  --worker-timeout 120
