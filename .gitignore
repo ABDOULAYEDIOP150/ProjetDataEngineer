@@ -3,11 +3,9 @@ venv/
 .venv/
 __pycache__/
 *.pyc
-
 airflow/logs/
 airflow/plugins/
 airflow/dbt_profiles/profiles.yml
-
 ecommerce_dbt/target/
 ecommerce_dbt/dbt_packages/
 ecommerce_dbt/logs/
