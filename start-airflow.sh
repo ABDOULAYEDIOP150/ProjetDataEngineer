@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo "PORT=$PORT"
+
 airflow db migrate
 
 airflow users create \
@@ -11,4 +13,4 @@ airflow users create \
   --role Admin \
   --email admin@example.com || true
 
-airflow webserver --port ${PORT:-8080} --hostname 0.0.0.0
+exec airflow webserver --port "${PORT:-10000}" --hostname 0.0.0.0
