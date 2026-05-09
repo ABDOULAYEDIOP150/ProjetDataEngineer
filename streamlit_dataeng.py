@@ -334,6 +334,12 @@ raw_tables = get_tables("raw")
 staging_tables = get_tables("staging")
 mart_tables = get_tables("mart")
 
+st.sidebar.write("DB_USER:", get_secret("DB_USER"))
+st.sidebar.write("DB_NAME:", get_secret("DB_NAME"))
+st.sidebar.write("RAW TABLES:", raw_tables)
+st.sidebar.write("STAGING TABLES:", staging_tables)
+st.sidebar.write("MART TABLES:", mart_tables)
+
 with st.sidebar.expander("🔎 Debug tables"):
     st.write("raw:", raw_tables)
     st.write("staging:", staging_tables)
