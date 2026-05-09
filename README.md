@@ -2,7 +2,6 @@
 
 ![CI](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/ci.yml/badge.svg)
 
-![Docker](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/docker-compose.yml/badge.svg) 
 
 ## 📊 Data Engineering Project — E-commerce Pipeline
 
