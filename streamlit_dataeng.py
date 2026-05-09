@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import psycopg2
+import os
 
 # ─────────────────────────────────────────
 # CONFIG
@@ -51,23 +52,30 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# CONNEXION
+# CONNEXION — lit les variables Render
 # ─────────────────────────────────────────
 @st.cache_resource
 def get_connection():
-    return psycopg2.connect(
-        host="dpg-d7v3hcfaqgkc73d4ni60-a.oregon-postgres.render.com",
-        port=5432,
-        dbname="ecommerce_dw_ykh0",
-        user="airflow",
-        password="4PcMUEqxPiA4dLdNielXI11t50tujGOw",
-        connect_timeout=10
-    )
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv("DB_HOST", "localhost"),
+            port=int(os.getenv("DB_PORT", 5432)),
+            dbname=os.getenv("DB_NAME", "ecommerce_dw"),
+            user=os.getenv("DB_USER", "app_user"),
+            password=os.getenv("DB_PASSWORD", ""),
+            connect_timeout=10
+        )
+        return conn
+    except Exception as e:
+        st.error(f"Erreur connexion : {e}")
+        return None
 
 @st.cache_data(ttl=300)
 def query(sql):
     try:
         conn = get_connection()
+        if conn is None:
+            return pd.DataFrame()
         return pd.read_sql_query(sql, conn)
     except Exception as e:
         st.error(f"Erreur SQL : {e}")
@@ -76,30 +84,33 @@ def query(sql):
 def get_tables(schema):
     df = query(f"""
         SELECT table_name FROM information_schema.tables
-        WHERE table_schema = '{schema}' ORDER BY table_name
+        WHERE table_schema = '{schema}'
+        ORDER BY table_name
     """)
     return df['table_name'].tolist() if not df.empty else []
 
 def load_table(schema, table, limit=1000):
     return query(f'SELECT * FROM {schema}."{table}" LIMIT {limit}')
 
-def show_exploration(df, title_color="#00d4ff"):
-    """Bloc d'exploration commun à tous les modules"""
+# ─────────────────────────────────────────
+# BLOC EXPLORATION COMMUN
+# ─────────────────────────────────────────
+def show_exploration(df, key_suffix=""):
     if df is None or df.empty:
         st.warning("Aucune donnée.")
         return
 
-    # KPIs rapides
-    col1, col2, col3, col4 = st.columns(4)
+    # KPIs
+    c1, c2, c3, c4 = st.columns(4)
     nulls = int(df.isnull().sum().sum())
-    dups = int(df.duplicated().sum())
-    with col1:
+    dups  = int(df.duplicated().sum())
+    with c1:
         st.markdown(f"<div class='metric-card'><div class='metric-value'>{len(df):,}</div><div class='metric-label'>Lignes</div></div>", unsafe_allow_html=True)
-    with col2:
+    with c2:
         st.markdown(f"<div class='metric-card'><div class='metric-value'>{len(df.columns)}</div><div class='metric-label'>Colonnes</div></div>", unsafe_allow_html=True)
-    with col3:
+    with c3:
         st.markdown(f"<div class='metric-card'><div class='metric-value'>{nulls}</div><div class='metric-label'>Valeurs nulles</div></div>", unsafe_allow_html=True)
-    with col4:
+    with c4:
         st.markdown(f"<div class='metric-card'><div class='metric-value'>{dups}</div><div class='metric-label'>Doublons</div></div>", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -112,17 +123,17 @@ def show_exploration(df, title_color="#00d4ff"):
 
         st.markdown("<div class='section-title'>Types & complétude</div>", unsafe_allow_html=True)
         meta = pd.DataFrame({
-            'Colonne': df.columns,
-            'Type': df.dtypes.astype(str).values,
-            'Non-nuls': df.count().values,
-            'Nulls': df.isnull().sum().values,
-            '% Complet': (df.count().values / len(df) * 100).round(1)
+            'Colonne':    df.columns,
+            'Type':       df.dtypes.astype(str).values,
+            'Non-nuls':   df.count().values,
+            'Nulls':      df.isnull().sum().values,
+            '% Complet':  (df.count().values / len(df) * 100).round(1)
         })
         st.dataframe(meta, use_container_width=True, hide_index=True)
 
-        st.markdown("<div class='section-title'>Statistiques descriptives</div>", unsafe_allow_html=True)
         num_df = df.select_dtypes(include=np.number)
         if not num_df.empty:
+            st.markdown("<div class='section-title'>Statistiques descriptives</div>", unsafe_allow_html=True)
             st.dataframe(num_df.describe().round(2), use_container_width=True)
 
     # ── Tab 2 : Distributions ──
@@ -132,14 +143,14 @@ def show_exploration(df, title_color="#00d4ff"):
 
         if num_cols:
             st.markdown("<div class='section-title'>Colonnes numériques</div>", unsafe_allow_html=True)
-            sel = st.selectbox("Colonne numérique", num_cols, key=f"num_{title_color}")
-            c1, c2 = st.columns(2)
-            with c1:
+            sel = st.selectbox("Colonne numérique", num_cols, key=f"num_{key_suffix}")
+            ca, cb = st.columns(2)
+            with ca:
                 fig = px.histogram(df, x=sel, nbins=30, template='plotly_dark',
                     color_discrete_sequence=['#00d4ff'], title=f'Distribution — {sel}')
                 fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig, use_container_width=True)
-            with c2:
+            with cb:
                 fig2 = px.box(df, y=sel, template='plotly_dark',
                     color_discrete_sequence=['#7c3aed'], title=f'Box plot — {sel}')
                 fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
@@ -147,7 +158,7 @@ def show_exploration(df, title_color="#00d4ff"):
 
         if cat_cols:
             st.markdown("<div class='section-title'>Colonnes catégorielles</div>", unsafe_allow_html=True)
-            sel_cat = st.selectbox("Colonne catégorielle", cat_cols, key=f"cat_{title_color}")
+            sel_cat = st.selectbox("Colonne catégorielle", cat_cols, key=f"cat_{key_suffix}")
             vc = df[sel_cat].value_counts().head(15)
             fig3 = px.bar(x=vc.index, y=vc.values, template='plotly_dark',
                 labels={'x': sel_cat, 'y': 'Nombre'}, title=f'Top valeurs — {sel_cat}',
@@ -155,7 +166,6 @@ def show_exploration(df, title_color="#00d4ff"):
             fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
             st.plotly_chart(fig3, use_container_width=True)
 
-        # Corrélations
         if len(num_cols) >= 2:
             st.markdown("<div class='section-title'>Matrice de corrélation</div>", unsafe_allow_html=True)
             corr = df[num_cols].corr().round(2)
@@ -168,10 +178,10 @@ def show_exploration(df, title_color="#00d4ff"):
     with tab3:
         st.markdown("<div class='section-title'>Complétude par colonne</div>", unsafe_allow_html=True)
         quality = pd.DataFrame({
-            'Colonne': df.columns,
-            '% Complet': (df.count() / len(df) * 100).round(1),
+            'Colonne':         df.columns,
+            '% Complet':       (df.count() / len(df) * 100).round(1),
             'Valeurs uniques': df.nunique(),
-            'Type': df.dtypes.astype(str)
+            'Type':            df.dtypes.astype(str)
         }).reset_index(drop=True)
 
         fig_q = px.bar(quality, x='Colonne', y='% Complet',
@@ -192,6 +202,15 @@ with st.sidebar:
         <div style='color:#8892b0; font-size:0.8rem; margin-top:5px;'>E-Commerce Analytics</div>
     </div>
     """, unsafe_allow_html=True)
+    st.divider()
+
+    # Test connexion
+    conn = get_connection()
+    if conn:
+        st.success("✅ PostgreSQL connecté")
+    else:
+        st.error("❌ Connexion échouée")
+
     st.divider()
 
     module = st.radio("MODULE", [
@@ -221,7 +240,7 @@ if "RAW" in module:
             limit = st.number_input("Limite", min_value=100, max_value=10000, value=1000, step=100)
 
         df = load_table('raw', selected, limit)
-        show_exploration(df, title_color="#00d4ff")
+        show_exploration(df, key_suffix="raw")
     else:
         st.error("Aucune table dans le schéma raw.")
 
@@ -234,12 +253,8 @@ elif "STAGING" in module:
     <p style='color:#8892b0;'>Données nettoyées et transformées — schéma <code>staging</code></p>
     """, unsafe_allow_html=True)
 
-    # Comparaison RAW vs STAGING
-    raw_tables = get_tables('raw')
+    raw_tables     = get_tables('raw')
     staging_tables = get_tables('staging')
-
-    # Tables disponibles : customers, order_items, orders, payments, products
-    common = [t for t in staging_tables if t in raw_tables]
 
     if staging_tables:
         col_sel, col_lim = st.columns([3, 1])
@@ -250,14 +265,14 @@ elif "STAGING" in module:
 
         df_stg = load_table('staging', selected, limit)
 
-        # Comparaison RAW vs STAGING si la table existe dans les deux
+        # Comparaison RAW vs STAGING si table commune
         if selected in raw_tables:
             df_raw_cmp = load_table('raw', selected, 10000)
             st.markdown("<div class='section-title'>Impact des transformations</div>", unsafe_allow_html=True)
             c1, c2, c3 = st.columns(3)
-            raw_n = len(df_raw_cmp)
-            stg_n = len(df_stg)
-            diff = raw_n - stg_n
+            raw_n  = len(df_raw_cmp)
+            stg_n  = len(df_stg)
+            diff   = raw_n - stg_n
             with c1:
                 st.markdown(f"<div class='metric-card'><div class='metric-value'>{raw_n:,}</div><div class='metric-label'>Lignes RAW</div></div>", unsafe_allow_html=True)
             with c2:
@@ -265,9 +280,17 @@ elif "STAGING" in module:
             with c3:
                 color = "#ff4444" if diff > 0 else "#00d4ff"
                 st.markdown(f"<div class='metric-card'><div class='metric-value' style='color:{color};'>{diff:,}</div><div class='metric-label'>Filtrées</div></div>", unsafe_allow_html=True)
+
+            fig_cmp = go.Figure(data=[
+                go.Bar(name='RAW',     x=['Lignes'], y=[raw_n], marker_color='#ff4444'),
+                go.Bar(name='STAGING', x=['Lignes'], y=[stg_n], marker_color='#00d4ff'),
+            ])
+            fig_cmp.update_layout(barmode='group', template='plotly_dark',
+                title='RAW vs STAGING', paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+            st.plotly_chart(fig_cmp, use_container_width=True)
             st.markdown("---")
 
-        show_exploration(df_stg, title_color="#7c3aed")
+        show_exploration(df_stg, key_suffix="staging")
     else:
         st.error("Aucune table dans le schéma staging.")
 
@@ -281,30 +304,24 @@ elif "MART" in module:
     """, unsafe_allow_html=True)
 
     mart_tables = get_tables('mart')
-    # Tables : dim_customers, dim_date, dim_products, fact_payments, fact_sales
 
     if mart_tables:
-        # ── Chargement des facts & dims ──
-        fact_sales     = load_table('mart', 'fact_sales', 10000)     if 'fact_sales'     in mart_tables else pd.DataFrame()
-        fact_payments  = load_table('mart', 'fact_payments', 10000)  if 'fact_payments'  in mart_tables else pd.DataFrame()
-        dim_customers  = load_table('mart', 'dim_customers', 10000)  if 'dim_customers'  in mart_tables else pd.DataFrame()
-        dim_products   = load_table('mart', 'dim_products', 10000)   if 'dim_products'   in mart_tables else pd.DataFrame()
-        dim_date       = load_table('mart', 'dim_date', 10000)       if 'dim_date'       in mart_tables else pd.DataFrame()
+        # Chargement des tables mart
+        fact_sales    = load_table('mart', 'fact_sales',    10000) if 'fact_sales'    in mart_tables else pd.DataFrame()
+        fact_payments = load_table('mart', 'fact_payments', 10000) if 'fact_payments' in mart_tables else pd.DataFrame()
+        dim_customers = load_table('mart', 'dim_customers', 10000) if 'dim_customers' in mart_tables else pd.DataFrame()
+        dim_products  = load_table('mart', 'dim_products',  10000) if 'dim_products'  in mart_tables else pd.DataFrame()
 
         # ── KPIs globaux ──
         st.markdown("<div class='section-title'>📌 KPIs Principaux</div>", unsafe_allow_html=True)
         c1, c2, c3, c4, c5 = st.columns(5)
 
-        # Revenu total depuis fact_sales ou fact_payments
-        rev_col = None
         df_fact = fact_sales if not fact_sales.empty else fact_payments
-        for col in ['total_amount', 'amount', 'revenue', 'sale_amount', 'payment_amount']:
-            if col in df_fact.columns:
-                rev_col = col
-                break
-        total_rev = df_fact[rev_col].sum() if rev_col else 0
+        rev_col = next((c for c in ['total_amount', 'amount', 'revenue', 'sale_amount', 'payment_amount']
+                        if c in df_fact.columns), None)
 
-        n_orders    = df_fact['order_id'].nunique()   if 'order_id'    in df_fact.columns else len(df_fact)
+        total_rev   = df_fact[rev_col].sum()          if rev_col and not df_fact.empty else 0
+        n_orders    = df_fact['order_id'].nunique()    if 'order_id'    in df_fact.columns else len(df_fact)
         n_customers = dim_customers['customer_id'].nunique() if not dim_customers.empty and 'customer_id' in dim_customers.columns else 0
         n_products  = dim_products['product_id'].nunique()   if not dim_products.empty  and 'product_id'  in dim_products.columns else 0
         avg_basket  = total_rev / n_orders if n_orders > 0 else 0
@@ -318,16 +335,13 @@ elif "MART" in module:
         st.markdown("---")
 
         # ── Graphiques fact_sales ──
-        if not fact_sales.empty:
+        if not fact_sales.empty and rev_col:
             st.markdown("<div class='section-title'>📈 Analyse des ventes</div>", unsafe_allow_html=True)
-
-            # Colonne date
-            date_col = next((c for c in fact_sales.columns if 'date' in c.lower() or 'time' in c.lower()), None)
+            date_col = next((c for c in fact_sales.columns if 'date' in c.lower()), None)
 
             ca, cb = st.columns(2)
             with ca:
-                # CA dans le temps
-                if date_col and rev_col:
+                if date_col:
                     ts = fact_sales.copy()
                     ts[date_col] = pd.to_datetime(ts[date_col])
                     ts['month'] = ts[date_col].dt.to_period('M').astype(str)
@@ -337,24 +351,21 @@ elif "MART" in module:
                     fig.update_traces(fill='tozeroy', fillcolor='rgba(0,212,255,0.1)')
                     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                     st.plotly_chart(fig, use_container_width=True)
-
             with cb:
-                # Distribution du CA
-                if rev_col:
-                    fig2 = px.histogram(fact_sales, x=rev_col, nbins=40, template='plotly_dark',
-                        title='Distribution du CA par commande', color_discrete_sequence=['#7c3aed'])
-                    fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-                    st.plotly_chart(fig2, use_container_width=True)
+                fig2 = px.histogram(fact_sales, x=rev_col, nbins=40, template='plotly_dark',
+                    title='Distribution du CA', color_discrete_sequence=['#7c3aed'])
+                fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+                st.plotly_chart(fig2, use_container_width=True)
 
-        # ── Analyse dim_customers ──
+        # ── Clients ──
         if not dim_customers.empty:
-            st.markdown("<div class='section-title'>👥 Clients</div>", unsafe_allow_html=True)
-            show_exploration(dim_customers, title_color="#00d4ff")
+            st.markdown("<div class='section-title'>👥 Analyse Clients</div>", unsafe_allow_html=True)
+            show_exploration(dim_customers, key_suffix="customers")
 
-        # ── Analyse dim_products ──
+        # ── Produits ──
         if not dim_products.empty:
-            st.markdown("<div class='section-title'>📦 Produits</div>", unsafe_allow_html=True)
-            show_exploration(dim_products, title_color="#7c3aed")
+            st.markdown("<div class='section-title'>📦 Analyse Produits</div>", unsafe_allow_html=True)
+            show_exploration(dim_products, key_suffix="products")
 
         # ── Exploration libre ──
         st.markdown("---")
@@ -362,7 +373,7 @@ elif "MART" in module:
         sel_table = st.selectbox("Choisir une table mart", mart_tables)
         lim = st.slider("Nombre de lignes", 100, 5000, 1000, 100)
         df_sel = load_table('mart', sel_table, lim)
-        show_exploration(df_sel, title_color="#ffaa00")
+        show_exploration(df_sel, key_suffix="mart_libre")
 
     else:
         st.error("Aucune table dans le schéma mart.")
