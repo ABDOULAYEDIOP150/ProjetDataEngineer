@@ -79,7 +79,6 @@ def get_connection():
     except Exception as e:
         st.error(f"❌ Erreur connexion PostgreSQL : {e}")
         return None
-
 @st.cache_data(ttl=30)
 def query(sql_query):
     conn = get_connection()
@@ -87,37 +86,48 @@ def query(sql_query):
         return pd.DataFrame()
 
     try:
-        return pd.read_sql_query(sql_query, conn)
+        with conn.cursor() as cur:
+            cur.execute(sql_query)
+            rows = cur.fetchall()
+            cols = [desc[0] for desc in cur.description]
+            return pd.DataFrame(rows, columns=cols)
     except Exception as e:
         st.error(f"❌ Erreur SQL : {e}")
         return pd.DataFrame()
+        
 def get_tables(schema):
     df = query(f"""
-        SELECT tablename AS table_name
-        FROM pg_catalog.pg_tables
-        WHERE schemaname = '{schema}'
-
-        UNION
-
-        SELECT viewname AS table_name
-        FROM pg_catalog.pg_views
-        WHERE schemaname = '{schema}'
-
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = '{schema}'
         ORDER BY table_name;
     """)
-    return df["table_name"].tolist() if not df.empty else []
+    return df["table_name"].tolist() if not df.empty else []    
 debug_db = query("""
 SELECT 
     current_database() AS database,
     current_user AS user,
+    current_schema() AS current_schema,
     inet_server_addr() AS server_ip;
+""")
+
+debug_all_tables = query("""
+SELECT table_schema, table_name
+FROM information_schema.tables
+WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+ORDER BY table_schema, table_name;
 """)
 
 raw_tables = get_tables("raw")
 staging_tables = get_tables("staging")
 mart_tables = get_tables("mart")
 
-st.sidebar.write("DEBUG DB:", debug_db)
+st.sidebar.write("DEBUG DB:")
+st.sidebar.dataframe(debug_db, width="stretch")
+
+st.sidebar.write("ALL TABLES:")
+st.sidebar.dataframe(debug_all_tables, width="stretch")
+
 st.sidebar.write("RAW:", raw_tables)
 st.sidebar.write("STAGING:", staging_tables)
 st.sidebar.write("MART:", mart_tables)
