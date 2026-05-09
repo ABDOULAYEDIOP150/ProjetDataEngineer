@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import psycopg2
+from sqlalchemy import create_engine, text
 
 # ─────────────────────────────────────────
 # CONFIG
@@ -51,20 +51,22 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────
-# CONNEXION — st.secrets (Streamlit Cloud)
+# CONNEXION — SQLAlchemy + st.secrets
 # ─────────────────────────────────────────
 @st.cache_resource
-def get_connection():
+def get_engine():
     try:
-        conn = psycopg2.connect(
-            host=st.secrets["DB_HOST"],
-            port=int(st.secrets["DB_PORT"]),
-            dbname=st.secrets["DB_NAME"],
-            user=st.secrets["DB_USER"],
-            password=st.secrets["DB_PASSWORD"],
-            connect_timeout=10
-        )
-        return conn
+        host     = st.secrets["DB_HOST"]
+        port     = st.secrets["DB_PORT"]
+        dbname   = st.secrets["DB_NAME"]
+        user     = st.secrets["DB_USER"]
+        password = st.secrets["DB_PASSWORD"]
+        url = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{dbname}"
+        engine = create_engine(url, connect_args={"connect_timeout": 10})
+        # Test connexion
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return engine
     except Exception as e:
         st.error(f"Erreur connexion : {e}")
         return None
@@ -72,10 +74,11 @@ def get_connection():
 @st.cache_data(ttl=300)
 def query(sql):
     try:
-        conn = get_connection()
-        if conn is None:
+        engine = get_engine()
+        if engine is None:
             return pd.DataFrame()
-        return pd.read_sql_query(sql, conn)
+        with engine.connect() as conn:
+            return pd.read_sql_query(text(sql), conn)
     except Exception as e:
         st.error(f"Erreur SQL : {e}")
         return pd.DataFrame()
@@ -114,6 +117,7 @@ def show_exploration(df, key_suffix=""):
     st.markdown("---")
     tab1, tab2, tab3 = st.tabs(["📋 Aperçu", "📈 Distributions", "🔍 Qualité"])
 
+    # ── Tab 1 : Aperçu ──
     with tab1:
         st.markdown("<div class='section-title'>Données</div>", unsafe_allow_html=True)
         st.dataframe(df, use_container_width=True, height=350)
@@ -133,6 +137,7 @@ def show_exploration(df, key_suffix=""):
             st.markdown("<div class='section-title'>Statistiques descriptives</div>", unsafe_allow_html=True)
             st.dataframe(num_df.describe().round(2), use_container_width=True)
 
+    # ── Tab 2 : Distributions ──
     with tab2:
         num_cols = df.select_dtypes(include=np.number).columns.tolist()
         cat_cols = df.select_dtypes(include='object').columns.tolist()
@@ -170,6 +175,7 @@ def show_exploration(df, key_suffix=""):
             fig4.update_layout(paper_bgcolor='rgba(0,0,0,0)', height=400)
             st.plotly_chart(fig4, use_container_width=True)
 
+    # ── Tab 3 : Qualité ──
     with tab3:
         st.markdown("<div class='section-title'>Complétude par colonne</div>", unsafe_allow_html=True)
         quality = pd.DataFrame({
@@ -199,8 +205,8 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     st.divider()
 
-    conn = get_connection()
-    if conn:
+    engine = get_engine()
+    if engine:
         st.success("✅ PostgreSQL connecté")
     else:
         st.error("❌ Connexion échouée")
@@ -303,6 +309,7 @@ elif "MART" in module:
         dim_customers = load_table('mart', 'dim_customers', 10000) if 'dim_customers' in mart_tables else pd.DataFrame()
         dim_products  = load_table('mart', 'dim_products',  10000) if 'dim_products'  in mart_tables else pd.DataFrame()
 
+        # KPIs
         st.markdown("<div class='section-title'>📌 KPIs Principaux</div>", unsafe_allow_html=True)
         c1, c2, c3, c4, c5 = st.columns(5)
 
@@ -310,10 +317,10 @@ elif "MART" in module:
         rev_col = next((c for c in ['total_amount', 'amount', 'revenue', 'sale_amount', 'payment_amount']
                         if c in df_fact.columns), None)
 
-        total_rev   = df_fact[rev_col].sum()               if rev_col and not df_fact.empty else 0
-        n_orders    = df_fact['order_id'].nunique()         if 'order_id'    in df_fact.columns else len(df_fact)
-        n_customers = dim_customers['customer_id'].nunique() if not dim_customers.empty and 'customer_id' in dim_customers.columns else 0
-        n_products  = dim_products['product_id'].nunique()   if not dim_products.empty  and 'product_id'  in dim_products.columns else 0
+        total_rev   = df_fact[rev_col].sum()                  if rev_col and not df_fact.empty else 0
+        n_orders    = df_fact['order_id'].nunique()            if 'order_id'    in df_fact.columns else len(df_fact)
+        n_customers = dim_customers['customer_id'].nunique()   if not dim_customers.empty and 'customer_id' in dim_customers.columns else 0
+        n_products  = dim_products['product_id'].nunique()     if not dim_products.empty  and 'product_id'  in dim_products.columns else 0
         avg_basket  = total_rev / n_orders if n_orders > 0 else 0
 
         with c1: st.markdown(f"<div class='metric-card'><div class='metric-value'>{total_rev:,.0f}€</div><div class='metric-label'>Chiffre d'affaires</div></div>", unsafe_allow_html=True)
@@ -324,6 +331,7 @@ elif "MART" in module:
 
         st.markdown("---")
 
+        # Graphiques fact_sales
         if not fact_sales.empty and rev_col:
             st.markdown("<div class='section-title'>📈 Analyse des ventes</div>", unsafe_allow_html=True)
             date_col = next((c for c in fact_sales.columns if 'date' in c.lower()), None)
