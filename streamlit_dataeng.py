@@ -91,17 +91,32 @@ def query(sql_query):
     except Exception as e:
         st.error(f"❌ Erreur SQL : {e}")
         return pd.DataFrame()
-
 def get_tables(schema):
     df = query(f"""
-        SELECT table_name
-        FROM information_schema.tables
-        WHERE table_schema = '{schema}'
-          AND table_type IN ('BASE TABLE', 'VIEW')
+        SELECT tablename AS table_name
+        FROM pg_catalog.pg_tables
+        WHERE schemaname = '{schema}'
+
+        UNION
+
+        SELECT viewname AS table_name
+        FROM pg_catalog.pg_views
+        WHERE schemaname = '{schema}'
+
         ORDER BY table_name;
     """)
     return df["table_name"].tolist() if not df.empty else []
+debug_db = query("""
+SELECT 
+    current_database() AS database,
+    current_user AS user,
+    inet_server_addr() AS server_ip;
+""")
 
+st.sidebar.write("DEBUG DB:", debug_db)
+st.sidebar.write("RAW:", raw_tables)
+st.sidebar.write("STAGING:", staging_tables)
+st.sidebar.write("MART:", mart_tables)
 def load_table(schema, table, limit=1000):
     return query(f'SELECT * FROM "{schema}"."{table}" LIMIT {int(limit)};')
 
