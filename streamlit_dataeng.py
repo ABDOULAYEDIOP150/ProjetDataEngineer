@@ -6,7 +6,7 @@ st.title("Test lecture RAW")
 
 try:
     engine = create_engine(
-        "postgresql+psycopg2://dba_admin:Admin1234@dpg-d7v3hcfaqgkc73d4ni60-a.oregon-postgres.render.com:5432/ecommerce_dw_ykh0",
+        "postgresql+psycopg2://airflow:4PcMUEqxPiA4dLdNielXI11t50tujGOw@dpg-d7v3hcfaqgkc73d4ni60-a.oregon-postgres.render.com:5432/ecommerce_dw_ykh0",
         connect_args={"sslmode": "require", "connect_timeout": 10}
     )
     with engine.connect() as conn:
