@@ -2,8 +2,7 @@
 -- 21 - ROLES AND PERMISSIONS
 -- =====================================================
 
--- Créer un utilisateur lecture seule
-
+-- ── 1. Rôle lecture seule (inchangé) ──────────────────
 DO $$
 BEGIN
     IF NOT EXISTS (
@@ -14,34 +13,38 @@ BEGIN
 END
 $$;
 
-
--- Donner accès à la base
-
-GRANT CONNECT ON DATABASE ecommerce_dw TO readonly_user;
-
-
--- Donner accès au schema mart
+GRANT CONNECT ON DATABASE ecommerce_dw_ykh0 TO readonly_user;
 
 GRANT USAGE ON SCHEMA mart TO readonly_user;
-
-
--- Donner lecture seule sur toutes les tables du mart
-
 GRANT SELECT ON ALL TABLES IN SCHEMA mart TO readonly_user;
-
-
--- Donner lecture seule sur les futures tables
-
 ALTER DEFAULT PRIVILEGES IN SCHEMA mart
-GRANT SELECT ON TABLES TO readonly_user;
+    GRANT SELECT ON TABLES TO readonly_user;
 
 
--- Vérification
+-- ── 2. Permissions pour airflow (fix dashboard Streamlit) ─
+GRANT USAGE ON SCHEMA raw     TO airflow;
+GRANT USAGE ON SCHEMA staging TO airflow;
+GRANT USAGE ON SCHEMA mart    TO airflow;
 
+GRANT SELECT ON ALL TABLES IN SCHEMA raw     TO airflow;
+GRANT SELECT ON ALL TABLES IN SCHEMA staging TO airflow;
+GRANT SELECT ON ALL TABLES IN SCHEMA mart    TO airflow;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA raw
+    GRANT SELECT ON TABLES TO airflow;
+ALTER DEFAULT PRIVILEGES IN SCHEMA staging
+    GRANT SELECT ON TABLES TO airflow;
+ALTER DEFAULT PRIVILEGES IN SCHEMA mart
+    GRANT SELECT ON TABLES TO airflow;
+
+
+-- ── 3. Vérification ────────────────────────────────────
 SELECT
     grantee,
     table_schema,
     table_name,
     privilege_type
 FROM information_schema.role_table_grants
-WHERE grantee = 'readonly_user';
+WHERE grantee IN ('readonly_user', 'airflow')
+  AND table_schema IN ('raw', 'staging', 'mart')
+ORDER BY grantee, table_schema, table_name;
