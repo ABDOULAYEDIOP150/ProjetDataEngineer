@@ -26,36 +26,43 @@ BEGIN
     IF NOT EXISTS (
         SELECT FROM pg_roles WHERE rolname = 'app_user'
     ) THEN
-        CREATE ROLE app_user LOGIN PASSWORD 'votre_mot_de_passe';
+        CREATE ROLE app_user LOGIN PASSWORD 'CHANGE_ME';
     END IF;
 END
 $$;
 
 GRANT CONNECT ON DATABASE ecommerce_dw TO app_user;
-
 GRANT USAGE ON SCHEMA raw     TO app_user;
 GRANT USAGE ON SCHEMA staging TO app_user;
 GRANT USAGE ON SCHEMA mart    TO app_user;
-
 GRANT SELECT ON ALL TABLES IN SCHEMA raw     TO app_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA staging TO app_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA mart    TO app_user;
-
-ALTER DEFAULT PRIVILEGES IN SCHEMA raw
-    GRANT SELECT ON TABLES TO app_user;
-ALTER DEFAULT PRIVILEGES IN SCHEMA staging
-    GRANT SELECT ON TABLES TO app_user;
-ALTER DEFAULT PRIVILEGES IN SCHEMA mart
-    GRANT SELECT ON TABLES TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA raw     GRANT SELECT ON TABLES TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA staging GRANT SELECT ON TABLES TO app_user;
+ALTER DEFAULT PRIVILEGES IN SCHEMA mart    GRANT SELECT ON TABLES TO app_user;
 
 
--- ── 3. Vérification ────────────────────────────────
+-- ── 3. Rôle airflow (connexion Streamlit Cloud) ────
+GRANT CONNECT ON DATABASE ecommerce_dw TO airflow;
+GRANT USAGE ON SCHEMA raw     TO airflow;
+GRANT USAGE ON SCHEMA staging TO airflow;
+GRANT USAGE ON SCHEMA mart    TO airflow;
+GRANT SELECT ON ALL TABLES IN SCHEMA raw     TO airflow;
+GRANT SELECT ON ALL TABLES IN SCHEMA staging TO airflow;
+GRANT SELECT ON ALL TABLES IN SCHEMA mart    TO airflow;
+ALTER DEFAULT PRIVILEGES IN SCHEMA raw     GRANT SELECT ON TABLES TO airflow;
+ALTER DEFAULT PRIVILEGES IN SCHEMA staging GRANT SELECT ON TABLES TO airflow;
+ALTER DEFAULT PRIVILEGES IN SCHEMA mart    GRANT SELECT ON TABLES TO airflow;
+
+
+-- ── 4. Vérification ────────────────────────────────
 SELECT
     grantee,
     table_schema,
     table_name,
     privilege_type
 FROM information_schema.role_table_grants
-WHERE grantee IN ('readonly_user', 'app_user')
+WHERE grantee IN ('readonly_user', 'app_user', 'airflow')
   AND table_schema IN ('raw', 'staging', 'mart')
 ORDER BY grantee, table_schema, table_name;
