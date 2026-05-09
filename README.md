@@ -1,6 +1,7 @@
 # 🚀 ProjetDataEngineer
 
 ![CI](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/ci.yml/badge.svg)
+![Docker](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/docker.yml/badge.svg) 
 ## 📊 Data Engineering Project — E-commerce Pipeline
 
 Projet Data Engineering complet autour d’un cas e-commerce.
