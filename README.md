@@ -1,4 +1,4 @@
-# 🚀 ProjetDataEngineer — End-to-End Data Engineering Platform
+# 🚀 ProjetDataEngineer — Enterprise End-to-End Data Platform
 
 ![CI](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/ci.yml/badge.svg)
 ![CD](https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer/actions/workflows/cd.yml/badge.svg)
@@ -8,125 +8,261 @@
 ![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 ![Render](https://img.shields.io/badge/Render-Cloud-purple)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)
+![Python](https://img.shields.io/badge/Python-3.11-yellow)
+![Analytics](https://img.shields.io/badge/Analytics-Engineering-brightgreen)
+![DBA](https://img.shields.io/badge/PostgreSQL-DBA-darkblue)
 
 ---
 
-# 📌 Présentation
+# 📌 Overview
 
-Projet Data Engineering complet simulant une plateforme analytique e-commerce moderne.
+**ProjetDataEngineer** est une plateforme Data Engineering complète simulant une architecture moderne utilisée en entreprise.
 
-Le projet couvre l’ensemble de la chaîne de traitement des données :
+Le projet reproduit l’intégralité du cycle de vie de la donnée :
 
 ```text
-API / CSV / Faker
-        ↓
-Python Ingestion
-        ↓
-PostgreSQL RAW
-        ↓
-SQL + dbt STAGING
-        ↓
-dbt MART
-        ↓
-Tests qualité
-        ↓
-Airflow orchestration
-        ↓
-Dashboard Streamlit
-        ↓
+APIs / CSV / Faker / JSON
+                ↓
+Python Data Ingestion
+                ↓
+PostgreSQL RAW Layer
+                ↓
+SQL Transformations
+                ↓
+dbt STAGING Models
+                ↓
+dbt MART Models
+                ↓
+Star Schema Analytics
+                ↓
+Data Quality Testing
+                ↓
+Apache Airflow Orchestration
+                ↓
+Analytics Dashboard (Streamlit)
+                ↓
+Docker Deployment
+                ↓
 CI/CD GitHub Actions
-        ↓
-Docker & Cloud Deployment
+                ↓
+Cloud Infrastructure
+(Render + Streamlit Cloud)
 ```
 
 ---
 
-# 🎯 Objectifs du projet
+# 🎯 Project Goals
 
-Construire une plateforme Data Engineering complète permettant de :
+Construire une plateforme Data Engineering moderne capable de :
 
 - ingérer des données depuis plusieurs sources
-- stocker les données dans PostgreSQL
+- automatiser les pipelines ETL/ELT
+- construire un Data Warehouse PostgreSQL
+- modéliser des couches analytiques
 - transformer les données avec dbt
-- construire un mini Data Warehouse
-- automatiser les pipelines avec Airflow
-- mettre en place des tests qualité
-- industrialiser le projet avec Docker & CI/CD
-- déployer une application analytique cloud
-- produire des dashboards métier interactifs
+- orchestrer des workflows avec Airflow
+- implémenter des contrôles qualité
+- optimiser les performances SQL
+- administrer PostgreSQL
+- déployer des applications cloud
+- produire des dashboards analytiques
+- industrialiser les workflows avec Docker & CI/CD
 
 ---
 
-# 🏗️ Architecture Data Platform
+# 🏛️ Enterprise Data Architecture
 
 ```text
-                    ┌────────────────────┐
-                    │  APIs / CSV / Fake │
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ Python Ingestion   │
-                    │ pandas / requests  │
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ PostgreSQL RAW     │
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ dbt STAGING        │
-                    │ Cleaning & Models  │
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ dbt MART           │
-                    │ Star Schema        │
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ Streamlit BI       │
-                    │ Analytics Dashboard│
-                    └─────────┬──────────┘
-                              │
-                              ▼
-                    ┌────────────────────┐
-                    │ Cloud Deployment   │
-                    │ Render + Streamlit │
-                    └────────────────────┘
+                    ┌─────────────────────────┐
+                    │ APIs / CSV / Faker     │
+                    │ JSON / External Data   │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ Python Ingestion Layer  │
+                    │ pandas / requests       │
+                    │ SQLAlchemy / logging    │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ PostgreSQL RAW          │
+                    │ Raw transactional data  │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ dbt STAGING             │
+                    │ Cleaning & Validation   │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ dbt MART                │
+                    │ STAR SCHEMA             │
+                    │ Fact & Dimension tables │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ Analytics Dashboard     │
+                    │ Streamlit + Plotly      │
+                    └──────────┬──────────────┘
+                               │
+                               ▼
+                    ┌─────────────────────────┐
+                    │ Cloud Deployment        │
+                    │ Render + Streamlit      │
+                    └─────────────────────────┘
 ```
 
 ---
 
-# 🧱 Stack Technique
+# 🧠 Engineering Domains Covered
+
+Ce projet couvre plusieurs domaines du Data & Software Engineering modernes.
+
+---
+
+## 🔹 Data Engineering
+
+- ETL / ELT pipelines
+- ingestion multi-sources
+- Data Warehouse PostgreSQL
+- orchestration Airflow
+- transformations dbt
+- optimisation SQL
+- monitoring pipelines
+- data quality
+- modélisation analytique
+- automatisation des workflows
+
+---
+
+## 🔹 Analytics Engineering
+
+Le projet applique les principes modernes d’Analytics Engineering :
+
+- architecture RAW / STAGING / MART
+- STAR SCHEMA
+- dbt models
+- dbt tests
+- dbt documentation
+- snapshots
+- incremental models
+- semantic analytics layer
+- business metrics standardization
+
+---
+
+## 🔹 Software Engineering
+
+Le projet applique des pratiques Software Engineering professionnelles :
+
+- architecture modulaire
+- séparation des responsabilités
+- Dockerisation
+- CI/CD GitHub Actions
+- cloud deployment
+- logging
+- monitoring
+- gestion des erreurs
+- variables d’environnement
+- clean code architecture
+- maintainable pipelines
+- scalable project structure
+
+---
+
+## 🔹 Database Administration (DBA)
+
+Le projet couvre plusieurs aspects d’administration PostgreSQL :
+
+### Fonctionnalités DBA
+
+- gestion des schémas PostgreSQL
+- rôles SQL
+- permissions SQL
+- connexions SSL
+- indexation
+- optimisation SQL
+- monitoring PostgreSQL
+- vues matérialisées
+- transactions SQL
+- maintenance PostgreSQL
+- sécurité base de données
+- tuning SQL
+- administration cloud PostgreSQL
+
+---
+
+## 🔹 Cloud & DevOps Engineering
+
+- Docker containers
+- GitHub Actions
+- CI/CD automation
+- Render PostgreSQL
+- Streamlit Cloud
+- Docker Hub
+- environment management
+- secrets management
+
+---
+
+## 🔹 Business Intelligence & Analytics
+
+- dashboards interactifs
+- visualisations Plotly
+- KPIs métier
+- analytics e-commerce
+- reporting analytique
+- BI self-service
+
+---
+
+# 🧱 Technology Stack
 
 ## 🔹 Data Engineering
 
 - Python
 - PostgreSQL
-- SQL avancé
-- dbt
-- Apache Airflow
-- Docker
 - SQLAlchemy
 - psycopg2
 - pandas
 - Faker
 - requests
+- dbt
+- Apache Airflow
+
+---
+
+## 🔹 Data Warehouse & SQL
+
+- PostgreSQL 16
+- PL/pgSQL
+- Window Functions
+- Materialized Views
+- Triggers
+- Stored Procedures
+- Index Optimization
+- Query Tuning
+
+---
 
 ## 🔹 Analytics & BI
 
 - Streamlit
 - Plotly
-- Power BI / Looker Studio
+- Power BI
+- Looker Studio
+
+---
 
 ## 🔹 DevOps & Cloud
 
-- GitHub
+- Docker
+- Docker Compose
 - GitHub Actions
 - Docker Hub
 - Render PostgreSQL
@@ -134,73 +270,93 @@ Construire une plateforme Data Engineering complète permettant de :
 
 ---
 
-# 📂 Structure du Projet
+# 📂 Enterprise Project Structure
 
 ```text
 ProjetDataEngineer/
 │
 ├── airflow/
 │   ├── dags/
+│   ├── plugins/
 │   └── logs/
 │
 ├── dashboards/
-│   └── streamlit/
+│   ├── streamlit/
+│   └── powerbi/
 │
 ├── dbt/
 │   ├── models/
+│   │   ├── raw/
 │   │   ├── staging/
 │   │   ├── mart/
-│   │   └── sources.yml
+│   │   └── intermediate/
 │   │
 │   ├── snapshots/
+│   ├── macros/
 │   ├── tests/
+│   ├── analyses/
 │   └── dbt_project.yml
 │
 ├── ingestion/
 │   ├── api/
 │   ├── csv/
 │   ├── faker/
-│   └── loaders/
+│   ├── loaders/
+│   ├── validators/
+│   └── logs/
 │
 ├── sql/
 │   ├── ddl/
-│   ├── views/
+│   ├── dml/
 │   ├── procedures/
 │   ├── triggers/
-│   └── indexes/
+│   ├── functions/
+│   ├── indexes/
+│   ├── views/
+│   ├── monitoring/
+│   └── optimization/
 │
 ├── tests/
-│   ├── data_quality/
 │   ├── integration/
-│   └── unit/
+│   ├── unit/
+│   ├── quality/
+│   └── performance/
 │
 ├── docker/
 │
 ├── docs/
 │
+├── monitoring/
+│
 ├── streamlit_dataeng.py
 ├── requirements.txt
 ├── docker-compose.yml
 ├── .env.example
+├── Makefile
 └── README.md
 ```
 
 ---
 
-# 🗄️ Modélisation PostgreSQL
+# 🗄️ PostgreSQL Data Warehouse
 
-## 🔹 Schémas
+## 🔹 Database Schemas
 
 ```text
 raw
 staging
 mart
 audit
+monitoring
 ```
 
 ---
 
-## 🔹 Tables RAW
+# 🧩 RAW Layer
+
+Données brutes ingérées depuis les sources externes.
+
+## 🔹 RAW Tables
 
 ```text
 customers
@@ -208,6 +364,11 @@ products
 orders
 order_items
 payments
+shipments
+returns
+marketing_campaigns
+customer_reviews
+
 fakestore_products
 fakestore_users
 fakestore_carts
@@ -215,221 +376,325 @@ fakestore_carts
 
 ---
 
-## 🔹 Tables STAGING
+# 🔄 STAGING Layer
+
+Données nettoyées et standardisées.
+
+## 🔹 STAGING Tables
 
 ```text
 stg_customers
-stg_orders
 stg_products
-stg_payments
+stg_orders
 stg_order_items
+stg_payments
+stg_shipments
+stg_returns
 ```
 
 ---
 
-## 🔹 Tables MART
+# ⭐ MART Layer
+
+Couche analytique finale optimisée BI.
+
+## 🔹 Fact Tables
 
 ```text
 fact_sales
 fact_payments
-
-dim_customers
-dim_products
-dim_date
+fact_returns
+fact_shipments
 ```
 
 ---
 
-# ⚙️ Fonctionnalités SQL Avancées
+## 🔹 Dimension Tables
 
-Le projet inclut des fonctionnalités SQL avancées utilisées en entreprise :
+```text
+dim_customers
+dim_products
+dim_date
+dim_campaigns
+dim_regions
+```
 
-## 🔹 Vues & vues matérialisées
+---
 
-- v_sales_by_month
-- v_customer_revenue
-- v_top_products
-- v_orders_summary
+# 🧠 Advanced SQL Features
 
-## 🔹 Index SQL
+Le projet implémente des fonctionnalités SQL avancées utilisées en production.
 
-- indexes B-tree
-- indexes composites
-- indexes sur clés étrangères
+---
 
-## 🔹 Fonctions SQL
+## 🔹 SQL Window Functions
 
+```sql
+ROW_NUMBER()
+RANK()
+DENSE_RANK()
+LAG()
+LEAD()
+SUM() OVER()
+AVG() OVER()
+```
+
+---
+
+## 🔹 PostgreSQL Advanced Features
+
+- vues matérialisées
+- triggers SQL
 - procédures stockées
 - fonctions PL/pgSQL
-- triggers
-- transactions
-
-## 🔹 Optimisation SQL
-
-- EXPLAIN ANALYZE
-- VACUUM
-- ANALYZE
-- optimisation des requêtes analytiques
-
----
-
-# 🔄 Ingestion des Données
-
-Le pipeline d’ingestion récupère des données depuis :
-
-- APIs e-commerce
-- fichiers CSV
-- données simulées Faker
-
-## 🔹 Fonctionnalités
-
-- validation des colonnes
-- nettoyage des données
-- logs ingestion
-- gestion des erreurs
-- batch loading PostgreSQL
+- contraintes SQL
+- colonnes générées
+- JSONB
 - transactions SQL
+- partitionnement
+- index composites
+- index partiels
+- EXPLAIN ANALYZE
+- VACUUM / ANALYZE
 
 ---
 
-# 🔥 dbt Transformation Layer
+## 🔹 Materialized Views
 
-Le projet utilise dbt pour industrialiser les transformations.
+```text
+v_sales_by_month
+v_customer_revenue
+v_top_products
+v_orders_summary
+v_return_rates
+v_customer_lifetime_value
+```
 
-## 🔹 Fonctionnalités dbt
+---
 
-- models staging
-- models mart
-- tests dbt
-- documentation dbt
-- snapshots
+# 🔄 Data Ingestion Layer
+
+Le pipeline Python gère :
+
+- ingestion API
+- ingestion CSV
+- ingestion JSON
+- génération Faker
+- validation données
+- standardisation
+- batch inserts PostgreSQL
+- gestion erreurs
+- logs ingestion
+- monitoring
+
+---
+
+# 🔥 dbt Analytics Engineering
+
+Le projet utilise dbt pour industrialiser les transformations analytiques.
+
+---
+
+## 🔹 dbt Features
+
 - sources
-- materializations
+- staging models
+- mart models
+- snapshots
+- documentation
+- tests
 - incremental models
+- macros
+- lineage
+
+---
+
+## 🔹 dbt Tests
+
+```yaml
+unique
+not_null
+relationships
+accepted_values
+```
+
+---
+
+## 🔹 Incremental Models
+
+Le projet implémente :
+
+- chargements incrémentaux
+- snapshots historiques
+- SCD Type 2
+- refresh partiels
 
 ---
 
 # 🧪 Data Quality & Testing
 
-Le projet implémente plusieurs niveaux de tests.
+Le projet implémente plusieurs niveaux de contrôle qualité.
 
-## 🔹 Tests dbt
+---
 
-- unique
-- not null
-- accepted values
-- relationships
-
-## 🔹 Tests SQL
+## 🔹 SQL Quality Checks
 
 - doublons
-- cohérence montants
-- commandes sans clients
+- commandes orphelines
 - paiements négatifs
-- dates invalides
+- incohérences montants
+- emails invalides
+- données manquantes
+- validation dates
 
-## 🔹 Tests Python
+---
 
-- tests unitaires ingestion
-- tests intégration pipeline
+## 🔹 Python Tests
+
+- tests unitaires
+- tests intégration
+- validation pipelines
 - validation DataFrames
 - validation schémas
 
-## 🔹 Monitoring Qualité
+---
 
-- logs pipeline
-- data quality checks
-- alertes erreurs
-- suivi des exécutions
+## 🔹 Performance Tests
+
+- benchmarking SQL
+- optimisation requêtes
+- tests volumétrie
+- monitoring performance
 
 ---
 
-# ⏰ Apache Airflow
+# 📈 Monitoring & Observability
+
+Le projet inclut une couche monitoring.
+
+---
+
+## 🔹 Monitoring Features
+
+- logs pipeline
+- logs Airflow
+- pipeline_runs
+- data_quality_checks
+- monitoring erreurs
+- temps exécution
+- métriques pipelines
+
+---
+
+# ⏰ Apache Airflow Orchestration
 
 Le pipeline est orchestré avec Apache Airflow.
 
-## 🔹 DAG principal
+---
+
+## 🔹 DAG Principal
 
 ```text
 extract_data
-    ↓
+        ↓
 validate_data
-    ↓
+        ↓
 load_raw_postgres
-    ↓
-run_dbt_models
-    ↓
+        ↓
+run_staging_models
+        ↓
+run_mart_models
+        ↓
 run_dbt_tests
-    ↓
-refresh_views
-    ↓
-export_metrics
+        ↓
+refresh_materialized_views
+        ↓
+generate_reports
+        ↓
+send_alerts
 ```
-
-## 🔹 Fonctionnalités
-
-- scheduling automatique
-- retry policies
-- dépendances de tâches
-- logs Airflow
-- monitoring des jobs
 
 ---
 
-# 📊 Dashboard Analytics — Streamlit
+## 🔹 Airflow Features
 
-Application analytique interactive construite avec Streamlit.
+- scheduling automatique
+- retries
+- monitoring
+- logs
+- task dependencies
+- alerting
+- orchestration cloud
 
-## 🔹 Modules disponibles
+---
 
-### 🗂️ RAW
+# 📊 Analytics Dashboard — Streamlit
+
+Dashboard analytique interactif connecté au Data Warehouse PostgreSQL.
+
+---
+
+## 🔹 RAW Module
 
 Exploration des données brutes :
 
 - statistiques descriptives
 - distributions
-- qualité des données
-- exploration interactive
-
-### 🔄 STAGING
-
-Analyse des données transformées :
-
-- comparaison RAW vs STAGING
-- nettoyage des données
-- transformations dbt
-
-### 📊 MART
-
-Couche BI & KPIs :
-
-- chiffre d’affaires
-- panier moyen
-- top produits
-- clients
-- tendances mensuelles
-- analyses business
+- exploration tables
+- qualité données
+- valeurs nulles
+- doublons
 
 ---
 
-# ☁️ Cloud Deployment
+## 🔹 STAGING Module
+
+Analyse transformations :
+
+- comparaison RAW vs STAGING
+- monitoring nettoyage
+- validation transformations
+- suivi qualité
+
+---
+
+## 🔹 MART Module
+
+Analytics métier :
+
+- chiffre d’affaires
+- revenus mensuels
+- panier moyen
+- top produits
+- segmentation clients
+- cohort analysis
+- tendances business
+- KPIs analytiques
+
+---
+
+# ☁️ Cloud Infrastructure
+
+---
 
 ## 🔹 Render PostgreSQL
 
-Base PostgreSQL hébergée dans le cloud via Render.
+Le Data Warehouse PostgreSQL est hébergé sur Render.
 
-Fonctionnalités :
+### Fonctionnalités
 
+- PostgreSQL managé
+- stockage cloud
 - SSL sécurisé
-- accès distant
-- stockage persistant
 - haute disponibilité
+- accès distant
+- backups
 
 ---
 
 ## 🔹 Streamlit Cloud
 
-Dashboard déployé sur Streamlit Community Cloud.
+Le dashboard est déployé sur Streamlit Community Cloud.
 
 ### URL publique
 
@@ -439,9 +704,11 @@ https://endtoenddiopabdoulaye.streamlit.app
 
 ---
 
-# 🐳 Docker
+# 🐳 Docker Infrastructure
 
 Le projet est entièrement conteneurisé.
+
+---
 
 ## 🔹 Containers
 
@@ -450,7 +717,9 @@ Le projet est entièrement conteneurisé.
 - dbt
 - Streamlit
 
-## 🔹 Lancement
+---
+
+## 🔹 Docker Compose
 
 ```bash
 docker compose up -d
@@ -460,64 +729,77 @@ docker compose up -d
 
 # 🔄 CI/CD — GitHub Actions
 
-Pipeline CI/CD automatisé.
+Pipeline CI/CD complet.
 
-## 🔹 Vérifications automatiques
+---
+
+## 🔹 Automated Workflows
 
 - installation dépendances
 - validation Python
 - tests SQL
 - dbt test
 - build Docker
+- push Docker Hub
 - déploiement cloud
 
 ---
 
-# 🔐 Sécurité
+# 🔐 Security & Governance
 
-## 🔹 Gestion des secrets
+---
+
+## 🔹 Secrets Management
 
 - `.env`
 - `st.secrets`
 - GitHub Secrets
-- variables Render
-
-## 🔹 Sécurité PostgreSQL
-
-- rôles SQL
-- permissions par schéma
-- accès lecture seule
-- connexions SSL
+- Render Secrets
 
 ---
 
-# 📈 KPIs Métier
+## 🔹 PostgreSQL Security
 
-Le projet produit plusieurs indicateurs business :
+- rôles SQL
+- permissions schémas
+- accès lecture seule
+- connexions SSL
+- isolation analytique
+
+---
+
+# 📊 Business KPIs
+
+Le projet génère plusieurs indicateurs métier :
 
 - chiffre d’affaires
 - panier moyen
 - revenus mensuels
 - top produits
-- segmentation clients
+- taux retour
 - performance paiements
-- qualité des données
-- évolution des ventes
+- segmentation clients
+- lifetime value
+- cohort retention
+- delivery performance
 
 ---
 
-# 🚀 Lancer le Projet
+# 🚀 Running the Project
 
-## 1️⃣ Cloner le repository
+---
+
+## 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/ABDOULAYEDIOP150/ProjetDataEngineer.git
+
 cd ProjetDataEngineer
 ```
 
 ---
 
-## 2️⃣ Installer les dépendances
+## 2️⃣ Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -525,7 +807,7 @@ pip install -r requirements.txt
 
 ---
 
-## 3️⃣ Configurer les variables d’environnement
+## 3️⃣ Configure Environment Variables
 
 Créer un fichier `.env`
 
@@ -539,7 +821,7 @@ DB_PASSWORD=password
 
 ---
 
-## 4️⃣ Lancer PostgreSQL & Airflow
+## 4️⃣ Start Infrastructure
 
 ```bash
 docker compose up -d
@@ -547,16 +829,17 @@ docker compose up -d
 
 ---
 
-## 5️⃣ Lancer dbt
+## 5️⃣ Run dbt
 
 ```bash
 dbt run
+
 dbt test
 ```
 
 ---
 
-## 6️⃣ Lancer Streamlit
+## 6️⃣ Launch Streamlit
 
 ```bash
 streamlit run streamlit_dataeng.py
@@ -564,90 +847,117 @@ streamlit run streamlit_dataeng.py
 
 ---
 
-# 📊 Captures & Dashboards
-
-## 🔹 Dashboard RAW
-
-- exploration données brutes
-- distributions
-- qualité des données
-
-## 🔹 Dashboard STAGING
-
-- données transformées
-- comparaison pipelines
-- monitoring qualité
-
-## 🔹 Dashboard MART
-
-- KPIs business
-- analytics e-commerce
-- visualisations interactives
+# 📚 Skills Demonstrated
 
 ---
-
-# 📚 Compétences démontrées
 
 ## 🔹 Data Engineering
 
 - ETL / ELT
-- Data Warehouse
-- SQL avancé
+- Data Warehousing
 - dbt
-- orchestration Airflow
-- modélisation analytique
-
-## 🔹 Cloud & DevOps
-
-- Docker
-- CI/CD
-- Render
-- Streamlit Cloud
-- GitHub Actions
-
-## 🔹 Data Analytics
-
-- BI
-- dashboards
-- KPIs
-- exploration de données
+- Airflow
+- SQL optimization
+- Data Modeling
 
 ---
 
-# 🎯 Résultat Final
+## 🔹 Analytics Engineering
 
-Ce projet démontre la capacité à construire une plateforme Data Engineering complète :
+- STAR SCHEMA
+- dbt transformations
+- metrics modeling
+- semantic analytics
 
-✅ ingestion automatisée  
+---
+
+## 🔹 Software Engineering
+
+- modular architecture
+- Dockerization
+- CI/CD
+- cloud deployment
+- logging & monitoring
+
+---
+
+## 🔹 Database Administration
+
+- PostgreSQL administration
+- SQL tuning
+- indexing
+- security
+- monitoring
+- query optimization
+
+---
+
+## 🔹 Cloud & DevOps
+
+- Render
+- Streamlit Cloud
+- Docker
+- GitHub Actions
+- Infrastructure automation
+
+---
+
+# 🎯 Final Result
+
+Cette plateforme démontre la capacité à construire une architecture Data Engineering moderne complète :
+
+✅ ingestion multi-sources  
 ✅ Data Warehouse PostgreSQL  
 ✅ transformations dbt  
 ✅ orchestration Airflow  
+✅ monitoring pipelines  
 ✅ tests qualité  
+✅ analytics engineering  
+✅ administration PostgreSQL  
 ✅ dashboard analytique  
-✅ CI/CD automatisé  
-✅ déploiement cloud  
+✅ Docker infrastructure  
+✅ CI/CD automation  
+✅ cloud deployment  
 ✅ architecture scalable & maintenable  
 
 ---
 
-# 👨‍💻 Auteur
+# 👨‍💻 Author
 
-## Abdoulaye Diop
+# Abdoulaye Diop
 
-### 🔗 GitHub
+## 🔗 GitHub
 
 https://github.com/ABDOULAYEDIOP150
 
 ---
 
-# ⭐ Objectif Portfolio
+# 🌍 Future Improvements
+
+- Kafka streaming
+- Spark cluster
+- Great Expectations
+- Terraform infrastructure
+- Kubernetes deployment
+- Snowflake integration
+- BigQuery version
+- Data Mesh architecture
+- ML pipelines
+- Real-time analytics
+
+---
+
+# ⭐ Portfolio Positioning
 
 Projet conçu pour démontrer des compétences professionnelles en :
 
 - Data Engineering
 - Analytics Engineering
+- Software Engineering
+- Database Administration (DBA)
 - SQL Engineering
 - BI Engineering
 - Cloud Data Platforms
+- DevOps Data Infrastructure
 
 ---
