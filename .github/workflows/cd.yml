@@ -2,7 +2,7 @@ name: CD - Data Engineering Pipeline
 
 on:
   workflow_run:
-    workflows: ["CI - Data Engineering Pipeline"]  # ✅ nom exact de ton ci.yml
+    workflows: ["CI - Data Engineering Pipeline"]
     types:
       - completed
     branches:
@@ -10,9 +10,6 @@ on:
       - master
 
 jobs:
-  # ─────────────────────────────────────────
-  # 1. Build & Push l'image sur Docker Hub
-  # ─────────────────────────────────────────
   build-and-push:
     name: Build & Push Docker image
     runs-on: ubuntu-latest
@@ -37,36 +34,11 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/projetdataengineer:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/projetdataengineer:${{ github.sha }}
 
-  # ─────────────────────────────────────────
-  # 2. Deploy sur le serveur via SSH
-  # ─────────────────────────────────────────
   deploy:
-    name: Deploy on server
+    name: Deploy on Render
     runs-on: ubuntu-latest
     needs: build-and-push
 
     steps:
-      - name: SSH into server & deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host:     ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key:      ${{ secrets.SERVER_SSH_KEY }}
-          port:     22
-          script: |
-            cd /opt/projetdataengineer
-
-            # Injecter les secrets dans le .env du serveur
-            echo "DB_USER=${{ secrets.DB_USER }}" > .env
-            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-
-            # Récupérer la nouvelle image
-            docker compose pull
-
-            # Redémarrer les services
-            docker compose up -d --remove-orphans
-
-            # Nettoyage des anciennes images
-            docker image prune -f
-
-            echo "✅ Déploiement terminé : $(date)"
+      - name: Trigger Render deploy
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
