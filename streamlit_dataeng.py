@@ -113,13 +113,14 @@ SELECT
     inet_server_addr() AS server_ip;
 """)
 
+raw_tables = get_tables("raw")
+staging_tables = get_tables("staging")
+mart_tables = get_tables("mart")
+
 st.sidebar.write("DEBUG DB:", debug_db)
 st.sidebar.write("RAW:", raw_tables)
 st.sidebar.write("STAGING:", staging_tables)
 st.sidebar.write("MART:", mart_tables)
-def load_table(schema, table, limit=1000):
-    return query(f'SELECT * FROM "{schema}"."{table}" LIMIT {int(limit)};')
-
 # ─────────────────────────────────────────
 # EXPLORATION
 # ─────────────────────────────────────────
