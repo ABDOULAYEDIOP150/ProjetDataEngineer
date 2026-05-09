@@ -14,14 +14,23 @@ END
 $$;
 
 GRANT CONNECT ON DATABASE ecommerce_dw TO readonly_user;
-
 GRANT USAGE ON SCHEMA mart TO readonly_user;
 GRANT SELECT ON ALL TABLES IN SCHEMA mart TO readonly_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA mart
     GRANT SELECT ON TABLES TO readonly_user;
 
 
--- ── 2. Permissions pour app_user (dashboard Streamlit) ─
+-- ── 2. Rôle app_user (dashboard Streamlit) ─────────
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT FROM pg_roles WHERE rolname = 'app_user'
+    ) THEN
+        CREATE ROLE app_user LOGIN PASSWORD 'votre_mot_de_passe';
+    END IF;
+END
+$$;
+
 GRANT CONNECT ON DATABASE ecommerce_dw TO app_user;
 
 GRANT USAGE ON SCHEMA raw     TO app_user;
