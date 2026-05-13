@@ -12,11 +12,8 @@
 ![Analytics](https://img.shields.io/badge/Analytics-Engineering-brightgreen)
 ![DBA](https://img.shields.io/badge/PostgreSQL-DBA-darkblue)
 
----
-
 # 📌 Overview
 
-**ProjetDataEngineer** est une plateforme Data Engineering complète simulant une architecture moderne utilisée en entreprise.
 
 Le projet reproduit l’intégralité du cycle de vie de la donnée :
 
@@ -46,25 +43,25 @@ Docker Deployment
 CI/CD GitHub Actions
                 ↓
 Cloud Infrastructure
-(Render + Streamlit Cloud)```
-
+(Render + Streamlit Cloud)
+```
 
 # 🎯 Project Goals
 
 Construire une plateforme Data Engineering moderne capable de :
 
-- ingérer des données depuis plusieurs sources
-- automatiser les pipelines ETL/ELT
-- construire un Data Warehouse PostgreSQL
-- modéliser des couches analytiques
-- transformer les données avec dbt
-- orchestrer des workflows avec Airflow
-- implémenter des contrôles qualité
-- optimiser les performances SQL
-- administrer PostgreSQL
-- déployer des applications cloud
-- produire des dashboards analytiques
-- industrialiser les workflows avec Docker & CI/CD
+* ingérer des données depuis plusieurs sources
+* automatiser les pipelines ETL/ELT
+* construire un Data Warehouse PostgreSQL
+* modéliser des couches analytiques
+* transformer les données avec dbt
+* orchestrer des workflows avec Airflow
+* implémenter des contrôles qualité
+* optimiser les performances SQL
+* administrer PostgreSQL
+* déployer des applications cloud
+* produire des dashboards analytiques
+* industrialiser les workflows avec Docker et CI/CD
 
 ---
 
@@ -72,46 +69,45 @@ Construire une plateforme Data Engineering moderne capable de :
 
 ```text
                   ┌─────────────────────────┐
-                    │ APIs / CSV / Faker       │
-                    │ JSON / External Data     │
-                    └──────────┬──────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ Python Ingestion Layer   │
-                    │ pandas / requests        │
-                    │ SQLAlchemy / logging     │
-                    └──────────┬──────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ PostgreSQL RAW           │
-                    │ Raw transactional data   │
-                    └──────────┬──────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ dbt STAGING              │
-                    │ Cleaning & Validation    │
-                    └──────────┬──────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ dbt MART                 │
-                    │ STAR SCHEMA              │
-                    │ Fact & Dimension tables  │
-                    └──────────┬──────────────┘
-                               │
-                    ┌──────────┴──────────────┐
-                    │                         │
-                    ▼                         ▼
+                  │ APIs / CSV / Faker      │
+                  │ JSON / External Data    │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ Python Ingestion Layer  │
+                  │ pandas / requests       │
+                  │ SQLAlchemy / logging    │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ PostgreSQL RAW          │
+                  │ Raw transactional data  │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ dbt STAGING             │
+                  │ Cleaning & Validation   │
+                  └──────────┬──────────────┘
+                             │
+                             ▼
+                  ┌─────────────────────────┐
+                  │ dbt MART                │
+                  │ STAR SCHEMA             │
+                  │ Fact & Dimension tables │
+                  └──────────┬──────────────┘
+                             │
+                  ┌──────────┴──────────────┐
+                  │                         │
+                  ▼                         ▼
          ┌──────────────────┐    ┌────────────────────┐
-         │ Streamlit Cloud  │    │  Power BI Desktop  │
-         │ Python Dashboard │    │  Connected to      │
-         │ Plotly Charts    │    │  PostgreSQL Cloud  │
+         │ Streamlit Cloud  │    │ Power BI Desktop   │
+         │ Python Dashboard │    │ Connected to       │
+         │ Plotly Charts    │    │ PostgreSQL Cloud   │
          └──────────────────┘    └────────────────────┘
 ```
-
 
 # 🧠 Engineering Domains Covered
 
