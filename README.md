@@ -919,7 +919,8 @@ Cette plateforme démontre la capacité à construire une architecture Data Engi
 ## 🔗 GitHub
 
 https://github.com/ABDOULAYEDIOP150
-
+## 🌐 Streamlit
+App: https://endtoenddiopabdoulaye.streamlit.app
 ---
 
 # 🌍 Future Improvements
