@@ -39,15 +39,14 @@ Data Quality Testing
                 ↓
 Apache Airflow Orchestration
                 ↓
-Analytics Dashboard (Streamlit)
+Analytics Dashboard (Streamlit + Power BI)
                 ↓
 Docker Deployment
                 ↓
 CI/CD GitHub Actions
                 ↓
 Cloud Infrastructure
-(Render + Streamlit Cloud)
-```
+(Render + Streamlit Cloud)```
 
 ---
 
@@ -73,48 +72,45 @@ Construire une plateforme Data Engineering moderne capable de :
 # 🏛️ Enterprise Data Architecture
 
 ```text
-                    ┌─────────────────────────┐
-                    │ APIs / CSV / Faker     │
-                    │ JSON / External Data   │
+                  ┌─────────────────────────┐
+                    │ APIs / CSV / Faker       │
+                    │ JSON / External Data     │
                     └──────────┬──────────────┘
                                │
                                ▼
                     ┌─────────────────────────┐
-                    │ Python Ingestion Layer  │
-                    │ pandas / requests       │
-                    │ SQLAlchemy / logging    │
+                    │ Python Ingestion Layer   │
+                    │ pandas / requests        │
+                    │ SQLAlchemy / logging     │
                     └──────────┬──────────────┘
                                │
                                ▼
                     ┌─────────────────────────┐
-                    │ PostgreSQL RAW          │
-                    │ Raw transactional data  │
+                    │ PostgreSQL RAW           │
+                    │ Raw transactional data   │
                     └──────────┬──────────────┘
                                │
                                ▼
                     ┌─────────────────────────┐
-                    │ dbt STAGING             │
-                    │ Cleaning & Validation   │
+                    │ dbt STAGING              │
+                    │ Cleaning & Validation    │
                     └──────────┬──────────────┘
                                │
                                ▼
                     ┌─────────────────────────┐
-                    │ dbt MART                │
-                    │ STAR SCHEMA             │
-                    │ Fact & Dimension tables │
+                    │ dbt MART                 │
+                    │ STAR SCHEMA              │
+                    │ Fact & Dimension tables  │
                     └──────────┬──────────────┘
                                │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ Analytics Dashboard     │
-                    │ Streamlit + Plotly      │
-                    └──────────┬──────────────┘
-                               │
-                               ▼
-                    ┌─────────────────────────┐
-                    │ Cloud Deployment        │
-                    │ Render + Streamlit      │
-                    └─────────────────────────┘
+                    ┌──────────┴──────────────┐
+                    │                         │
+                    ▼                         ▼
+         ┌──────────────────┐    ┌────────────────────┐
+         │ Streamlit Cloud  │    │  Power BI Desktop  │
+         │ Python Dashboard │    │  Connected to      │
+         │ Plotly Charts    │    │  PostgreSQL Cloud  │
+         └──────────────────┘    └────────────────────┘
 ```
 
 ---
@@ -212,7 +208,8 @@ Le projet couvre plusieurs aspects d’administration PostgreSQL :
 
 ## 🔹 Business Intelligence & Analytics
 
-- dashboards interactifs
+- dashboards interactifs Streamlit
+- Power BI Desktop connecté à PostgreSQL
 - visualisations Plotly
 - KPIs métier
 - analytics e-commerce
@@ -255,7 +252,6 @@ Le projet couvre plusieurs aspects d’administration PostgreSQL :
 - Streamlit
 - Plotly
 - Power BI
-- Looker Studio
 
 ---
 
