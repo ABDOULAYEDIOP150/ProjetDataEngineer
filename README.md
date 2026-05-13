@@ -48,7 +48,6 @@ CI/CD GitHub Actions
 Cloud Infrastructure
 (Render + Streamlit Cloud)```
 
----
 
 # 🎯 Project Goals
 
@@ -113,7 +112,6 @@ Construire une plateforme Data Engineering moderne capable de :
          └──────────────────┘    └────────────────────┘
 ```
 
----
 
 # 🧠 Engineering Domains Covered
 
